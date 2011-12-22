@@ -35,10 +35,10 @@ shell._VERSION = "0.1"
 shell._COPYRIGHT = "(c) 2011 Julien Desgats, with contributions from Patrick Rapin and Reuben Thomas"
 shell._LICENSE = "MIT License"
 if jit then
-  shell.greetings = ("ILuaNG %s, running %s\nJIT:%s %s\n"):format(shell._VERSION, jit.version,
+  shell.greetings = ("ILuaJIT %s, running %s\nJIT:%s %s\n"):format(shell._VERSION, jit.version,
     jit.status() and "ON" or "OFF", table.concat({ select(2, jit.status()) }, " "))
 else
-  shell.greetings = ("ILuaNG %s, running %s\n"):format(shell._VERSION, _VERSION)
+  shell.greetings = ("ILuaJIT %s, running %s\n"):format(shell._VERSION, _VERSION)
 end
 
 shell.value = { } -- Result value options
