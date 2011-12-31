@@ -25,6 +25,7 @@ ffi.cdef[[
   rl_completion_func_t *rl_attempted_completion_function;
   char *rl_line_buffer;
   int rl_completion_append_character;
+  int rl_attempted_completion_over;
 ]]
 
 local libreadline = ffi.load("readline")
@@ -43,9 +44,12 @@ function M.shell(config)
     function libreadline.rl_attempted_completion_function(word, startpos, endpos)
       local strword = ffi.string(word)
       local buffer = ffi.string(libreadline.rl_line_buffer)
+      local matches = config.complete(strword, buffer, startpos, endpos)
+      if not matches then return nil end
+      -- if matches is an empty array, tell readline to not call default completion (file)
+      libreadline.rl_attempted_completion_over = 1
       -- translate matches table to C strings 
       -- (there is probably more efficient ways to do it)
-      local matches = config.complete(strword, buffer, startpos, endpos)
       return libreadline.rl_completion_matches(text, function(text, i)
         local match = matches[i+1]
         var = match

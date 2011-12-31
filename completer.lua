@@ -53,6 +53,8 @@ if lfs then
     local path, name = str:match("(.*)[\\/]+(.*)")
     path = (path or ".") .. "/"
     name = name or str
+    -- avoid to trigger an error if folder does not exists
+    if not lfs.attributes(path) then return end
     for f in lfs.dir(path) do
       if (lfs.attributes(path .. f) or {}).mode == 'directory' then
         coyield(f .. "/")
