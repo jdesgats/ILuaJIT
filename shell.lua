@@ -2,6 +2,7 @@
 
 local completer = require "completer"
 local stringio = require "pl.stringio"
+local pretty = require "pl.pretty"
 
 --- Adds VT100 control codes to colorize text anr resets settings.
 -- Result is `<ESC>[...m<text><ESC>[0m`
@@ -42,8 +43,9 @@ else
 end
 
 shell.value = { } -- Result value options
-shell.value.separator = "\t"
-shell.value.prettyprint_tables = false -- TODO
+shell.value.separator = "\n"
+shell.value.prettyprint_tables = true
+shell.value.table_use_tostring = true -- when false, pretty print tables even if a __tostring method exists.
 
 shell.onerror = { }
 shell.onerror.print_code = true  -- if true, error handler will try to print source code where error happend
@@ -60,7 +62,22 @@ shell.input_sequence = 1 -- incremented for each new command (used to generate c
 -- Responsible to transform result into a printable string
 -- Called with the result position and values (starting from pos)
 function shell.value.handler(pos, value)
-  return tostring(value)
+  local tvalue = type(value)
+  if tvalue == "table" and shell.value.prettyprint_tables then
+    -- if table has a __tostring metamethod, then use it
+    local mt = getmetatable(value)
+    if mt and mt.__tostring and shell.value.table_use_tostring then
+      value = tostring(value)
+    else
+      -- otherwise pretty-print it
+      -- TODO: make a custom pretty print function: short tables on a single line,
+      -- clearer indentation, ...
+      value = pretty.write(value)
+    end
+  else -- fall back to default tostring
+    value = tostring(value)
+  end
+  return colorize("["..pos.."]", 1, 30) .. " "..value
 end
 
 -- mapping between typed commands (as function reference) and corresponding source
