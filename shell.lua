@@ -74,12 +74,12 @@ function shell.onerror.handler(err)
     local info = debug.getinfo(i)
     if not info then break end
     buffer[#buffer+1] = tmpl:format(info.source, info.currentline or -1, info.namewhat, info.name or "?")
-    if (info.what == "Lua" or info.what == "main") and info.currentline then
+    if shell.onerror.print_code and (info.what == "Lua" or info.what == "main") and info.currentline then
       local file
       if src_history[info.func]       then file = stringio.open(src_history[info.func])
       elseif info.source:match("^@")  then file = io.open(info.source:sub(2), "r") end
       if file then
-        buffer[#buffer+1] = highlight_line(file, info.currentline, 3)
+        buffer[#buffer+1] = highlight_line(file, info.currentline, shell.onerror.area)
       end
     end
   end
