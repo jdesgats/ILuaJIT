@@ -1,0 +1,454 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>ILuaJIT</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>ldoc</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Misc_settings">Misc settings</a></li>
+<li><a href="#Values_display">Values display</a></li>
+<li><a href="#Error_handling">Error handling</a></li>
+<li><a href="#Internal_functions">Internal functions</a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul>
+  <li><a href="../modules/completer.html">completer</a></li>
+  <li><strong>shell</strong></li>
+</ul>
+<h2>Topics</h2>
+<ul>
+  <li><a href="../topics/README.md.html">README.md</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>shell</code></h1>
+
+<p>Defines shell behavior and configuration settings.</p>
+<p> This module is exposed as <code>shell</code> global variable in ILuaJIT. Unless stated
+ otherwise, all settings and functions can be changed at any time and changes
+ takes effect immediately.
+ However settings are used internally by callbacks so if you change these 
+ functions without take care to read relevant settings at each invocation, 
+ some of them could become ineffective.</p>
+
+<p> Callbacks should not print someting directly to screen but return text to be
+ displayed.</p>
+
+<h2><a href="#Misc_settings">Misc settings</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#_VERSION">_VERSION</a></td>
+	<td class="summary">ILuaJIT version number.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#_COPYRIGHT">_COPYRIGHT</a></td>
+	<td class="summary">ILuaJIT copyright information.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#_LICENSE">_LICENSE</a></td>
+	<td class="summary">ILuaJIT license information.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#greetings">greetings</a></td>
+	<td class="summary">Message displayed when ILuaJIT is started.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#completer">completer</a></td>
+	<td class="summary">Completion engine.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#input_sequence">input_sequence</a></td>
+	<td class="summary">Command count
+ Number incremented for each new command.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#prompt">prompt&nbsp;(primary)</a></td>
+	<td class="summary">Generates prompt text.</td>
+	</tr>
+</table>
+<h2><a href="#Values_display">Values display</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#value.separator">value.separator</a></td>
+	<td class="summary">Separator for each result.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#value.prettyprint_tables">value.prettyprint_tables</a></td>
+	<td class="summary">Whether tables are pretty-printed.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#value.table_use_tostring">value.table_use_tostring</a></td>
+	<td class="summary">Whether __tostring metamethod is honored.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#value.handler">value.handler&nbsp;(pos, value)</a></td>
+	<td class="summary">Callback to transform result into a printable string.</td>
+	</tr>
+</table>
+<h2><a href="#Error_handling">Error handling</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#onerror.print_code">onerror.print_code</a></td>
+	<td class="summary">Prints code where error has happend.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#onerror.area">onerror.area</a></td>
+	<td class="summary">Number of lines before and after the error to print.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#onerror.handler">onerror.handler&nbsp;(err)</a></td>
+	<td class="summary">Error handler.</td>
+	</tr>
+</table>
+<h2><a href="#Internal_functions">Internal functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#try">try&nbsp;(cmd)</a></td>
+	<td class="summary">Tries to execute a command.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#result_handler">result_handler&nbsp;(success, ...)</a></td>
+	<td class="summary">Handles command results
+ Called by <a href="../modules/shell.html#try">try</a> to format execution results.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2><a name="Misc_settings"></a>Misc settings</h2>
+    
+
+
+    <dl class="function">
+    <dt>
+    <a name = "_VERSION"></a>
+    <strong>_VERSION</strong>
+    </dt>
+    <dd>
+    ILuaJIT version number. 
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "_COPYRIGHT"></a>
+    <strong>_COPYRIGHT</strong>
+    </dt>
+    <dd>
+    ILuaJIT copyright information. 
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "_LICENSE"></a>
+    <strong>_LICENSE</strong>
+    </dt>
+    <dd>
+    ILuaJIT license information. 
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "greetings"></a>
+    <strong>greetings</strong>
+    </dt>
+    <dd>
+    Message displayed when ILuaJIT is started. 
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "completer"></a>
+    <strong>completer</strong>
+    </dt>
+    <dd>
+    Completion engine. </p>
+
+<p> Default value is the module <a href="../modules/completer.html#">completer</a>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "input_sequence"></a>
+    <strong>input_sequence</strong>
+    </dt>
+    <dd>
+    Command count
+ Number incremented for each new command.  It is used internally to generate 
+ chunk names. <em>This value should be <strong>read only</strong>, do not attempt to modify it !</em>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "prompt"></a>
+    <strong>prompt&nbsp;(primary)</strong>
+    </dt>
+    <dd>
+    Generates prompt text. 
+ Called at each line to generate prompt text. Default implementation returns
+ <code>&gt;</code> for the first line and <code>&gt;&gt;</code> for next ones.
+
+    <h3>Parameters:</h3>
+    <ul>
+       <li><code><em>primary</em></code>: <strong>boolean</strong>  <code>true</code> for first line, <code>false</code> for next ones.</li>
+    </ul>
+
+
+    <h3>Returns:</h3>
+    <ol>
+        <a href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a> Prompt to display.
+    </ol>
+
+
+</dd>
+</dl>
+    <h2><a name="Values_display"></a>Values display</h2>
+    
+
+
+    <dl class="function">
+    <dt>
+    <a name = "value.separator"></a>
+    <strong>value.separator</strong>
+    </dt>
+    <dd>
+    Separator for each result. 
+ This string is used to join results (in case of multiple results).</p>
+
+<p> Default value is <code>\n</code>.
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "value.prettyprint_tables"></a>
+    <strong>value.prettyprint_tables</strong>
+    </dt>
+    <dd>
+    Whether tables are pretty-printed. 
+ If this setting is set to true, then tables are fully printed (insted of
+ traditional <code>table: 0x...</code> notation. This setting is currently not fully
+ implemented, it can result in huge outputs as tables are <em>fully</em> printed.</p>
+
+<p> Default value is <code>true</code>.
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "value.table_use_tostring"></a>
+    <strong>value.table_use_tostring</strong>
+    </dt>
+    <dd>
+    Whether __tostring metamethod is honored. 
+ Tells if table pretty printing is done or not if table has a <code>__tostring</code> 
+ metamethod. If set to <code>false</code>, tables will always be pretty printed even if 
+ they have the metamethod. This setting takes effect only if 
+ <a href="../modules/shell.html#value.prettyprint_tables">value.prettyprint_tables</a> is set to <code>true</code>.</p>
+
+<p> Default value is <code>true</code>.
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "value.handler"></a>
+    <strong>value.handler&nbsp;(pos, value)</strong>
+    </dt>
+    <dd>
+    Callback to transform result into a printable string. 
+
+    <h3>Parameters:</h3>
+    <ul>
+       <li><code><em>pos</em></code>: <strong>number</strong> 
+<pre><code>Result position (starting at one).
+</code></pre>
+</li>
+       <li><code><em>value</em></code>:   Result to print (can be any type).</li>
+    </ul>
+
+
+    <h3>Returns:</h3>
+    <ol>
+        <a href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a> A printable representation of <code>value</code>.
+    </ol>
+
+
+</dd>
+</dl>
+    <h2><a name="Error_handling"></a>Error handling</h2>
+    
+
+
+    <dl class="function">
+    <dt>
+    <a name = "onerror.print_code"></a>
+    <strong>onerror.print_code</strong>
+    </dt>
+    <dd>
+    Prints code where error has happend. 
+ If set to <code>true</code>, error handler will try to load source files to get the code
+ which caused error and print it to screen to help you to catch what happend.</p>
+
+<p> Default value is <code>true</code>.
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "onerror.area"></a>
+    <strong>onerror.area</strong>
+    </dt>
+    <dd>
+    Number of lines before and after the error to print. </p>
+
+<p> Default value is 3.
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "onerror.handler"></a>
+    <strong>onerror.handler&nbsp;(err)</strong>
+    </dt>
+    <dd>
+    Error handler. 
+ This function is directly called by <a href="http://www.lua.org/manual/5.1/manual.html#pdf-xpcall">xpcall</a> if command exection has failed
+ (so this will not be called for a syntax error).
+
+    <h3>Parameters:</h3>
+    <ul>
+       <li><code><em>err</em></code>:   Error object (not always a string).</li>
+    </ul>
+
+
+    <h3>Returns:</h3>
+    <ol>
+        <a href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a> Error message to be printed.
+    </ol>
+
+
+</dd>
+</dl>
+    <h2><a name="Internal_functions"></a>Internal functions</h2>
+     These functions should be changed with care. Take a look at source code to see
+ exectly what original functions do.
+    <dl class="function">
+    <dt>
+    <a name = "try"></a>
+    <strong>try&nbsp;(cmd)</strong>
+    </dt>
+    <dd>
+    Tries to execute a command. 
+ Called with command string (once syntax check has passed), this functions 
+ compiles the code and execute it. Results are then handled by 
+ <a href="../modules/shell.html#result_handler">result_handler</a>.
+
+    <h3>Parameters:</h3>
+    <ul>
+       <li><code><em>cmd</em></code>: <a href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a>   Valid Lua string to execute.</li>
+    </ul>
+
+
+    <h3>Returns:</h3>
+    <ol>
+        <a href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a> Execution output.
+    </ol>
+
+
+</dd>
+    <dt>
+    <a name = "result_handler"></a>
+    <strong>result_handler&nbsp;(success, ...)</strong>
+    </dt>
+    <dd>
+    Handles command results
+ Called by <a href="../modules/shell.html#try">try</a> to format execution results.  Default implementation calls 
+ <a href="../modules/shell.html#value.handler">value.handler</a> for each result and returns the concatenation of calls.
+
+    <h3>Parameters:</h3>
+    <ul>
+       <li><code><em>success</em></code>: <strong>boolean</strong>   Whether the call has been successfull.</li>
+       <li><code><em>...</em></code>:   Command results in case of success or error message in case of failure.</li>
+    </ul>
+
+
+    <h3>Returns:</h3>
+    <ol>
+        <a href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a> Results as printable string.
+    </ol>
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.1</a></i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

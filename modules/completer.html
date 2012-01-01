@@ -1,0 +1,274 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>ILuaJIT</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>ldoc</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+<li><a href="#Tables">Tables</a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul>
+  <li><strong>completer</strong></li>
+  <li><a href="../modules/shell.html">shell</a></li>
+</ul>
+<h2>Topics</h2>
+<ul>
+  <li><a href="../topics/README.md.html">README.md</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>completer</code></h1>
+
+<p>Completion engine
+ Compute possible matches for input text.</p>
+<p> Based on <a href="https://github.com/rrthomas/lua-rlcompleter">lua-rlcompleter</a> by 
+ Patrick Rapin and Reuben Thomas.</p>
+
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#final_char_setter">final_char_setter&nbsp;(char)</a></td>
+	<td class="summary">Callback function to set final character.</td>
+	</tr>
+</table>
+<h2><a href="#Tables">Tables</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#keywords">keywords</a></td>
+	<td class="summary">The list of Lua keywords</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#completers">completers</a></td>
+	<td class="summary">References all completion generators (completers).</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#completers.value">completers.value</a></td>
+	<td class="summary">Completers for Lua values.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#completers.string">completers.string</a></td>
+	<td class="summary">Completers for strings.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2><a name="Functions"></a>Functions</h2>
+    
+    <dl class="function">
+    <dt>
+    <a name = "final_char_setter"></a>
+    <strong>final_char_setter&nbsp;(char)</strong>
+    </dt>
+    <dd>
+    Callback function to set final character. 
+ Called to set the final chracter if a single match occur. Typically, it is used
+ to close a string if completion occurs inside an open string. It is intended
+ to be redefined as default function does nothing.
+
+    <h3>Parameters:</h3>
+    <ul>
+       <li><code><em>char</em></code>: <a href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a>   Either an empty string or a string of length 1.</li>
+    </ul>
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Tables"></a>Tables</h2>
+    
+    <dl class="function">
+    <dt>
+    <a name = "keywords"></a>
+    <strong>keywords</strong>
+    </dt>
+    <dd>
+    The list of Lua keywords 
+
+    <h3>Fields:</h3>
+    <ul>
+       <li><code><em>and</em></code>: 
+
+</li>
+       <li><code><em>break</em></code>: 
+
+</li>
+       <li><code><em>do</em></code>: 
+
+</li>
+       <li><code><em>else</em></code>: 
+
+</li>
+       <li><code><em>elseif</em></code>: 
+
+</li>
+       <li><code><em>end</em></code>: 
+
+</li>
+       <li><code><em>false</em></code>: 
+
+</li>
+       <li><code><em>for</em></code>: 
+
+</li>
+       <li><code><em>function</em></code>: 
+
+</li>
+       <li><code><em>if</em></code>: 
+
+</li>
+       <li><code><em>in</em></code>: 
+
+</li>
+       <li><code><em>local</em></code>: 
+
+</li>
+       <li><code><em>nil</em></code>: 
+
+</li>
+       <li><code><em>not</em></code>: 
+
+</li>
+       <li><code><em>or</em></code>: 
+
+</li>
+       <li><code><em>repeat</em></code>: 
+
+</li>
+       <li><code><em>return</em></code>: 
+
+</li>
+       <li><code><em>then</em></code>: 
+
+</li>
+       <li><code><em>true</em></code>: 
+
+</li>
+       <li><code><em>until</em></code>: 
+
+</li>
+       <li><code><em>while</em></code>: 
+
+</li>
+    </ul>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "completers"></a>
+    <strong>completers</strong>
+    </dt>
+    <dd>
+    References all completion generators (completers). 
+ Completion is context sensitive and there is 2 <em>contexts</em> : values 
+ (<a href="../modules/completer.html#completers.value">completers.value</a>) and strings (<a href="../modules/completer.html#completers.string">completers.string</a>). Some arguments are
+ given to the completer the first time it's called.</p>
+
+<p> Each context has its corresponding table (sequence) with <em>completers</em> inside.
+ These tables works a bit like <code>package.loaders</code> : each loader is called as a 
+ coroutine and can generate possible matches (by yielding strings). But, unlike 
+ <code>package.loaders</code>, all completers are always called; even if matches has been 
+ generated by previous ones.</p>
+
+<p> It it not the completer job to filter matches with current text (this is done
+ by the complettion engine), but just generate all possible matches.
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "completers.value"></a>
+    <strong>completers.value</strong>
+    </dt>
+    <dd>
+    
+<p>Completers for Lua values. 
+ Completers are called with two arguments :</p>
+
+<ul>
+    <li><code>value</code> to complete (not necessarily a table)</li>
+    <li><code>separator</code> used to index value (<code>.</code>, <code>:</code> or <code>[</code>)</li>
+</ul>
+
+<p> Default completers for values are :</p>
+
+<ol>
+    <li>Table field completer: searches for fields inside <code>value</code> if it's a table.</li>
+    <li>Metatable completer: if <code>value</code> has a metatable, calls first completer 
+     with that table.</li>
+</ol>
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "completers.string"></a>
+    <strong>completers.string</strong>
+    </dt>
+    <dd>
+    Completers for strings. 
+ Completers are called with the string to complete.
+ If <code>lfs</code> is can be loaded, a completer for files and folders is provided, it
+ search for items starting with given string in current directory.
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.1</a></i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

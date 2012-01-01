@@ -1,0 +1,164 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>ILuaJIT</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>ldoc</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Introduction">Introduction</a></li>
+<li><a href="#Installation">Installation</a></li>
+<li><a href="#Usage">Usage</a></li>
+<li><a href="#Known_issues">Known issues</a></li>
+<li><a href="#License__MIT_">License (MIT)</a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul>
+  <li><a href="../modules/completer.html">completer</a></li>
+  <li><a href="../modules/shell.html">shell</a></li>
+</ul>
+<h2>Topics</h2>
+<ul>
+  <li><strong>README.md</strong></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Topic <code>README.md</code></h1>
+
+    
+<h1>ILuaJIT - Readline powered shell for LuaJIT</h1>
+
+<p><a name="Introduction"></a></p>
+<h2>Introduction</h2>
+
+<p><strong>This project is just at early stages of it's development.</strong>
+It's nowhere near finished or stable or anything !</p>
+
+<p>This script provides a shell with readline integration to LuaJIT. It uses a 
+adapted version <a href="https://github.com/rrthomas/lua-rlcompleter">lua-rlcompleter</a> 
+for completion engine and a pure Lua binding for readline (thanks to LuaJIT FFI).</p>
+
+<p>It is also intended to ease interaction with Lua a bit like IPython for Python
+with features such as:</p>
+
+<ul>
+    <li>History (not persistant yet)</li>
+    <li>Improved error handling: shows the code which caused error</li>
+    <li>Pretty printed output: terminal colors, print tables, ...</li>
+    <li>Anything else you could imagine ! (any contribution is welcome)</li>
+</ul>
+
+<p>Complete HTML documentation is available online <a href="http://jdesgats.github.com/ILuaJIT">here</a>.</p>
+
+
+<p><a name="Installation"></a></p>
+<h2>Installation</h2>
+
+<p>ILuaJIT has not been tested on a lot of systems but should work on any Readline
+capable system.</p>
+
+<p>You need at least the following dependencies installed :</p>
+
+<ul>
+    <li><a href="http://luajit.org/download.html">LuaJIT 2.0 beta 9</a></li>
+    <li><a href="https://github.com/stevedonovan/Penlight">Penlight</a> in your <code>LUA_PATH</code></li>
+    <li>libreadline</li>
+</ul>
+
+<p>Optionnally, if <a href="http://keplerproject.github.com/luafilesystem">lfs</a> is installed,
+it will be used to complete file names inside strings.</p>
+
+<p>Once eveything is set up, just clone the repo or unpack an 
+<a href="https://github.com/jdesgats/ILuaJIT/zipball/master">archive</a> somewhere.</p>
+
+<p><a href="http://jdesgats.github.com/ILuaJIT">HTML documentation</a> is done using
+<a href="https://github.com/stevedonovan/LDoc">LDoc</a>. As a config file is provided, all
+you have to do to build it is to invoke LDoc in ILuaJIT directory.</p>
+
+<p><a name="Usage"></a></p>
+<h2>Usage</h2>
+
+<p>To run the shell, start just <code>iluajit.lua</code> :</p>
+
+
+<pre>
+ luajit iluajit.lua
+
+</pre>
+
+<p>An extra global variable <code>shell</code> is available to customize nearly any aspect of
+the shell. To see available options, see <code>shell</code> module documentation.</p>
+
+<p><a name="Known_issues"></a></p>
+<h2>Known issues</h2>
+
+<ul>
+    <li><code>undefined symbol: PC</code> error on startup: it's a dependency problem when
+    loading libreadline, try to preload libtermcap (with something like 
+    <code>LD_PRELOAD=/usr/lib/libtermcap.so luajit iluajit.lua</code>).
+    See <a href="http://lua-users.org/lists/lua-l/2011-12/msg00705.html">this post</a>.</li>
+</ul>
+
+<p><a name="License__MIT_"></a></p>
+<h2>License (MIT)</h2>
+
+<p>Copyright (C) 2011-2012 Julien Desgats</p>
+
+<p>Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+of the Software, and to permit persons to whom the Software is furnished to do
+so, subject to the following conditions:</p>
+
+<p>The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.</p>
+
+<p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.</p>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.1</a></i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>
