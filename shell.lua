@@ -1,4 +1,14 @@
--- Internal logic and configuration
+--- Defines shell behavior and configuration settings.
+-- This module is exposed as `shell` global variable in ILuaJIT. Unless stated
+-- otherwise, all settings and functions can be changed at any time and changes
+-- takes effect immediately.
+-- However settings are used internally by callbacks so if you change these 
+-- functions without take care to read relevant settings at each invocation, 
+-- some of them could become ineffective.
+-- 
+-- Callbacks should not print someting directly to screen but return text to be
+-- displayed.
+-- @alias shell
 
 local completer = require "completer"
 local stringio = require "pl.stringio"
@@ -30,11 +40,26 @@ local function highlight_line(file, target, area)
   return table.concat(buffer, "\n")
 end
 
--- This global variable will contain some settings that can be user-changed
 local shell = { }
+
+--------------------------------------------------------------------------------
+-- Misc settings
+-- @section misc
+
+--- ILuaJIT version number.
+-- @setting _VERSION
 shell._VERSION = "0.1"
-shell._COPYRIGHT = "(c) 2011 Julien Desgats, with contributions from Patrick Rapin and Reuben Thomas"
+
+--- ILuaJIT copyright information.
+-- @setting _COPYRIGHT
+shell._COPYRIGHT = "(c) 2011-2012 Julien Desgats, with contributions from Patrick Rapin and Reuben Thomas"
+
+--- ILuaJIT license information.
+-- @setting _LICENSE
 shell._LICENSE = "MIT License"
+
+--- Message displayed when ILuaJIT is started.
+-- @setting greetings
 if jit then
   shell.greetings = ("ILuaJIT %s, running %s\nJIT:%s %s\n"):format(shell._VERSION, jit.version,
     jit.status() and "ON" or "OFF", table.concat({ select(2, jit.status()) }, " "))
@@ -42,25 +67,62 @@ else
   shell.greetings = ("ILuaJIT %s, running %s\n"):format(shell._VERSION, _VERSION)
 end
 
-shell.value = { } -- Result value options
+--- Completion engine.
+--
+-- Default value is the module @{completer}
+-- @setting completer
+shell.completer = completer
+
+--- Command count
+-- Number incremented for each new command. It is used internally to generate 
+-- chunk names. *This value should be **read only**, do not attempt to modify it !*
+-- @setting input_sequence
+shell.input_sequence = 1
+
+--- Generates prompt text.
+-- Called at each line to generate prompt text. Default implementation returns
+-- `>  ` for the first line and `>> ` for next ones.
+-- @param[type=boolean] primary `true` for first line, `false` for next ones.
+-- @return[type=string] Prompt to display.
+shell.prompt = function(primary) return primary and ">  " or ">> " end
+
+--------------------------------------------------------------------------------
+-- Values display
+-- @section value
+
+shell.value = { }
+
+--- Separator for each result.
+-- This string is used to join results (in case of multiple results).
+--
+-- Default value is `\n`.
+-- @setting value.separator
 shell.value.separator = "\n"
+
+--- Whether tables are pretty-printed.
+-- If this setting is set to true, then tables are fully printed (insted of
+-- traditional `table: 0x...` notation. This setting is currently not fully
+-- implemented, it can result in huge outputs as tables are *fully* printed.
+--
+-- Default value is `true`.
+-- @setting value.prettyprint_tables
 shell.value.prettyprint_tables = true
+
+--- Whether __tostring metamethod is honored.
+-- Tells if table pretty printing is done or not if table has a `__tostring` 
+-- metamethod. If set to `false`, tables will always be pretty printed even if 
+-- they have the metamethod. This setting takes effect only if 
+-- @{value.prettyprint_tables} is set to `true`.
+--
+-- Default value is `true`.
+-- @setting value.table_use_tostring
 shell.value.table_use_tostring = true -- when false, pretty print tables even if a __tostring method exists.
 
-shell.onerror = { }
-shell.onerror.print_code = true  -- if true, error handler will try to print source code where error happend
-shell.onerror.area = 3           -- number of lines before and after the problematic line to print
-
-shell.prompt = function(primary) return primary and ">  " or ">> " end
-shell.completer = completer
-shell.input_sequence = 1 -- incremented for each new command (used to generate chunk names)
-
-
--- Some callbacks to affect display, they should *not* print anything but return
--- strings, it is intended to ease some complex configurations (remote, ...)
-
--- Responsible to transform result into a printable string
--- Called with the result position and values (starting from pos)
+--- Callback to transform result into a printable string.
+-- @param[type=number]  pos    Result position (starting at one).
+-- @param               value  Result to print (can be any type).
+-- @return[type=string] A printable representation of `value`.
+-- @function value.handler
 function shell.value.handler(pos, value)
   local tvalue = type(value)
   if tvalue == "table" and shell.value.prettyprint_tables then
@@ -80,10 +142,35 @@ function shell.value.handler(pos, value)
   return colorize("["..pos.."]", 1, 30) .. " "..value
 end
 
+
+--------------------------------------------------------------------------------
+-- Error handling
+-- @section value
+shell.onerror = { }
+
+--- Prints code where error has happend.
+-- If set to `true`, error handler will try to load source files to get the code
+-- which caused error and print it to screen to help you to catch what happend.
+--
+-- Default value is `true`.
+-- @setting onerror.print_code
+shell.onerror.print_code = true
+
+--- Number of lines before and after the error to print.
+--
+-- Default value is 3.
+-- @setting onerror.area
+shell.onerror.area = 3
+
 -- mapping between typed commands (as function reference) and corresponding source
 local src_history = setmetatable({ }, { __mode = "k" })
 
--- Called by xpcall when something goes wrong. Must return the string to be printed.
+--- Error handler.
+-- This function is directly called by @{xpcall} if command exection has failed
+-- (so this will not be called for a syntax error).
+-- @param  err  Error object (not always a string).
+-- @return[type=string] Error message to be printed.
+-- @function onerror.handler
 function shell.onerror.handler(err)
   local buffer = { colorize(tostring(err), 31), "Stack traceback:" }
   local tmpl   = "  At %s:%d (in %s %s)"
@@ -103,7 +190,34 @@ function shell.onerror.handler(err)
   return table.concat(buffer, "\n")
 end
 
--- prints argument only if there is at least one
+
+--------------------------------------------------------------------------------
+-- Internal functions.
+-- These functions should be changed with care. Take a look at source code to see
+-- exectly what original functions do.
+-- @section internal
+
+--- Tries to execute a command.
+-- Called with command string (once syntax check has passed), this functions 
+-- compiles the code and execute it. Results are then handled by 
+-- @{result_handler}.
+-- @param[type=string]  cmd  Valid Lua string to execute.
+-- @return[type=string] Execution output.
+-- @function try
+function shell.try(cmd)
+  local chunkname = "stdin#"..shell.input_sequence
+  local func = assert(loadstring(cmd, chunkname))
+  shell.input_sequence = shell.input_sequence + 1
+  src_history[func] = cmd
+  return shell.result_handler(xpcall(func, shell.onerror.handler))
+end
+
+--- Handles command results
+-- Called by @{try} to format execution results. Default implementation calls 
+-- @{value.handler} for each result and returns the concatenation of calls.
+-- @param[type=boolean]  success  Whether the call has been successfull.
+-- @param  ...  Command results in case of success or error message in case of failure.
+-- @return[type=string] Results as printable string.
 function shell.result_handler(success, ...)
   if success then
     local buf = { }
@@ -114,14 +228,6 @@ function shell.result_handler(success, ...)
   end
   -- error
   return (...)
-end
-
-function shell.try(cmd)
-  local chunkname = "stdin#"..shell.input_sequence
-  local func = assert(loadstring(cmd, chunkname))
-  shell.input_sequence = shell.input_sequence + 1
-  src_history[func] = cmd
-  return shell.result_handler(xpcall(func, shell.onerror.handler))
 end
 
 return shell
