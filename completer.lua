@@ -113,9 +113,15 @@ function M.complete(word, line, startpos, endpos)
     end
   end
   
-  local function call_completors(completers, arg)
+  local function call_completors(completers, ...)
     for _, completer in ipairs(completers) do
-      for match in cowrap(completer), arg do add(match) end
+      local coro = cowrap(completer)
+      local match = coro(...) -- first call => give parameters
+      if match then
+        add(match)
+        -- continue calling to get next matches
+        for match in coro do add(match) end
+      end
     end
   end
 
@@ -140,7 +146,7 @@ function M.complete(word, line, startpos, endpos)
     if expr and expr ~= "" then
       local v = loadstring("return " .. expr)
       if v then
-        call_completors(M.completers.value, v())
+        call_completors(M.completers.value, v(), sep)
       end
     end
     if #matches == 0 then
