@@ -162,8 +162,8 @@ shell.onerror.print_code = true
 -- @setting onerror.area
 shell.onerror.area = 3
 
--- mapping between typed commands (as function reference) and corresponding source
-local src_history = setmetatable({ }, { __mode = "k" })
+-- mapping between typed commands (as chunk names) and corresponding source
+local src_history = { }
 
 --- Error handler.
 -- This function is directly called by @{xpcall} if command exection has failed
@@ -174,20 +174,24 @@ local src_history = setmetatable({ }, { __mode = "k" })
 function shell.onerror.handler(err)
   local buffer = { colorize(tostring(err), 31), "Stack traceback:" }
   local tmpl   = "  At %s:%d (in %s %s)"
+  -- index in buffer of last xpcall call in stack, it will be used to strip ILuaJIT
+  -- internal functions of the error traceback.
+  local lastxpcall = 0
   for i=2, math.huge do
     local info = debug.getinfo(i)
     if not info then break end
+    if info.func == xpcall then lastxpcall = #buffer end
     buffer[#buffer+1] = tmpl:format(info.source, info.currentline or -1, info.namewhat, info.name or "?")
     if shell.onerror.print_code and (info.what == "Lua" or info.what == "main") and info.currentline then
       local file
-      if src_history[info.func]       then file = stringio.open(src_history[info.func])
+      if src_history[info.source]     then file = stringio.open(src_history[info.source])
       elseif info.source:match("^@")  then file = io.open(info.source:sub(2), "r") end
       if file then
         buffer[#buffer+1] = highlight_line(file, info.currentline, shell.onerror.area)
       end
     end
   end
-  return table.concat(buffer, "\n")
+  return table.concat(buffer, "\n", 1, lastxpcall)
 end
 
 
@@ -208,7 +212,7 @@ function shell.try(cmd)
   local chunkname = "stdin#"..shell.input_sequence
   local func = assert(loadstring(cmd, chunkname))
   shell.input_sequence = shell.input_sequence + 1
-  src_history[func] = cmd
+  src_history[chunkname] = cmd
   return shell.result_handler(xpcall(func, shell.onerror.handler))
 end
 
