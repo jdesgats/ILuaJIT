@@ -18,6 +18,7 @@ with features such as:
   * Pretty printed output: terminal colors, print tables, ...
   * Anything else you could imagine ! (any contribution is welcome)
 
+Complete HTML documentation is available online [here](http://jdesgats.github.com/ILuaJIT).
 
 
 ## Installation
@@ -34,9 +35,12 @@ You need at least the following dependencies installed :
 Optionnally, if [lfs](http://keplerproject.github.com/luafilesystem) is installed,
 it will be used to complete file names inside strings.
 
-HTML documentation is done using [LDoc](https://github.com/stevedonovan/LDoc).
-As a config file is provided, all you have to do to build it is to invoke LDoc 
-in ILuaJIT directory.
+Once eveything is set up, just clone the repo or unpack an 
+[archive](https://github.com/jdesgats/ILuaJIT/zipball/master) somewhere.
+
+[HTML documentation](http://jdesgats.github.com/ILuaJIT) is done using
+[LDoc](https://github.com/stevedonovan/LDoc). As a config file is provided, all
+you have to do to build it is to invoke LDoc in ILuaJIT directory.
 
 ## Usage
 
