@@ -32,13 +32,15 @@ readline.shell{
       cmd = cmd .. coyield(shell.prompt(false)) .. "\n"
     end
 
-    if func then
-      output = shell.try(cmd)
-    else output = err end
+    if not cmd:match("^%s*$") then
+      if func then
+        output = shell.try(cmd)
+      else output = err end
 
-    -- display the result
-    io.stdout:write(output, #output > 0 and output:sub(-1, -1) ~= "\n" and "\n" or "")
-    return cmd:sub(1, -2) -- remove last \n for history
+      -- display the result
+      io.stdout:write(output, #output > 0 and output:sub(-1, -1) ~= "\n" and "\n" or "")
+      return cmd:sub(1, -2) -- remove last \n for history
+    end
   end,
 
   complete = shell.completer.complete,
