@@ -27,12 +27,13 @@ readline.shell{
 
     -- continue to get lines until get a complete chunk
     while true do
-      func, err = loadstring(cmd, chunkname)
+      func, err = loadstring(cmd)
       if func or err:sub(-7) ~= "'<eof>'" then break end
       cmd = cmd .. coyield(shell.prompt(false)) .. "\n"
     end
 
     if not cmd:match("^%s*$") then
+      local output
       if func then
         output = shell.try(cmd)
       else output = err end
