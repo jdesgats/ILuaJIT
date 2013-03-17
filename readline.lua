@@ -50,9 +50,8 @@ function M.shell(config)
       libreadline.rl_attempted_completion_over = 1
       -- translate matches table to C strings 
       -- (there is probably more efficient ways to do it)
-      return libreadline.rl_completion_matches(text, function(text, i)
+      return libreadline.rl_completion_matches(word, function(text, i)
         local match = matches[i+1]
-        var = match
         if match then
           -- readline will free the C string by itself, so create copies of them
           local buf = ffi.C.malloc(#match + 1)
